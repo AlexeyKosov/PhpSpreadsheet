@@ -7,11 +7,11 @@ use PHPUnit\Framework\TestCase;
 
 class ReferenceHelperTest extends TestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
     }
 
-    public function testColumnSort()
+    public function testColumnSort(): void
     {
         $columnBase = $columnExpectedResult = [
             'A', 'B', 'Z',
@@ -32,7 +32,7 @@ class ReferenceHelperTest extends TestCase
         }
     }
 
-    public function testColumnReverseSort()
+    public function testColumnReverseSort(): void
     {
         $columnBase = $columnExpectedResult = [
             'A', 'B', 'Z',
@@ -54,7 +54,7 @@ class ReferenceHelperTest extends TestCase
         }
     }
 
-    public function testCellSort()
+    public function testCellSort(): void
     {
         $cellBase = $columnExpectedResult = [
             'A1', 'B1', 'AZB1',
@@ -75,7 +75,7 @@ class ReferenceHelperTest extends TestCase
         }
     }
 
-    public function testCellReverseSort()
+    public function testCellReverseSort(): void
     {
         $cellBase = $columnExpectedResult = [
             'BBA544', 'ABB289', 'ABA121',
@@ -94,5 +94,39 @@ class ReferenceHelperTest extends TestCase
         foreach ($cellBase as $key => $value) {
             self::assertEquals($columnExpectedResult[$key], $value);
         }
+    }
+
+    /**
+     * @dataProvider providerFormulaUpdates
+     */
+    public function testUpdateFormula(string $formula, int $insertRows, int $insertColumns, string $worksheet, string $expectedResult): void
+    {
+        $referenceHelper = ReferenceHelper::getInstance();
+
+        $result = $referenceHelper->updateFormulaReferences($formula, 'A1', $insertRows, $insertColumns, $worksheet);
+
+        self::assertSame($expectedResult, $result);
+    }
+
+    public function providerFormulaUpdates(): array
+    {
+        return require 'tests/data/ReferenceHelperFormulaUpdates.php';
+    }
+
+    /**
+     * @dataProvider providerMultipleWorksheetFormulaUpdates
+     */
+    public function testUpdateFormulaForMultipleWorksheets(string $formula, int $insertRows, int $insertColumns, string $expectedResult): void
+    {
+        $referenceHelper = ReferenceHelper::getInstance();
+
+        $result = $referenceHelper->updateFormulaReferencesAnyWorksheet($formula, $insertRows, $insertColumns);
+
+        self::assertSame($expectedResult, $result);
+    }
+
+    public function providerMultipleWorksheetFormulaUpdates(): array
+    {
+        return require 'tests/data/ReferenceHelperFormulaUpdatesMultipleSheet.php';
     }
 }

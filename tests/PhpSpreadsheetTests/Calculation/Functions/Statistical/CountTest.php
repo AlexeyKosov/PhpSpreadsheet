@@ -8,9 +8,17 @@ use PHPUnit\Framework\TestCase;
 
 class CountTest extends TestCase
 {
-    public function setUp()
+    private $compatibilityMode;
+
+    protected function setUp(): void
     {
+        $this->compatibilityMode = Functions::getCompatibilityMode();
         Functions::setCompatibilityMode(Functions::COMPATIBILITY_EXCEL);
+    }
+
+    protected function tearDown(): void
+    {
+        Functions::setCompatibilityMode($this->compatibilityMode);
     }
 
     /**
@@ -18,15 +26,15 @@ class CountTest extends TestCase
      *
      * @param mixed $expectedResult
      */
-    public function testBasicCOUNT($expectedResult, ...$args)
+    public function testBasicCOUNT($expectedResult, ...$args): void
     {
         $result = Statistical::COUNT(...$args);
-        $this->assertEquals($expectedResult, $result, '', 1E-12);
+        self::assertEqualsWithDelta($expectedResult, $result, 1E-12);
     }
 
     public function providerBasicCOUNT()
     {
-        return require 'data/Calculation/Statistical/BasicCOUNT.php';
+        return require 'tests/data/Calculation/Statistical/BasicCOUNT.php';
     }
 
     /**
@@ -34,15 +42,15 @@ class CountTest extends TestCase
      *
      * @param mixed $expectedResult
      */
-    public function testExcelCOUNT($expectedResult, ...$args)
+    public function testExcelCOUNT($expectedResult, ...$args): void
     {
         $result = Statistical::COUNT(...$args);
-        $this->assertEquals($expectedResult, $result, '', 1E-12);
+        self::assertEqualsWithDelta($expectedResult, $result, 1E-12);
     }
 
     public function providerExcelCOUNT()
     {
-        return require 'data/Calculation/Statistical/ExcelCOUNT.php';
+        return require 'tests/data/Calculation/Statistical/ExcelCOUNT.php';
     }
 
     /**
@@ -50,17 +58,17 @@ class CountTest extends TestCase
      *
      * @param mixed $expectedResult
      */
-    public function testOpenOfficeCOUNT($expectedResult, ...$args)
+    public function testOpenOfficeCOUNT($expectedResult, ...$args): void
     {
         Functions::setCompatibilityMode(Functions::COMPATIBILITY_OPENOFFICE);
 
         $result = Statistical::COUNT(...$args);
-        $this->assertEquals($expectedResult, $result, '', 1E-12);
+        self::assertEqualsWithDelta($expectedResult, $result, 1E-12);
     }
 
     public function providerOpenOfficeCOUNT()
     {
-        return require 'data/Calculation/Statistical/OpenOfficeCOUNT.php';
+        return require 'tests/data/Calculation/Statistical/OpenOfficeCOUNT.php';
     }
 
     /**
@@ -68,16 +76,16 @@ class CountTest extends TestCase
      *
      * @param mixed $expectedResult
      */
-    public function testGnumericCOUNT($expectedResult, ...$args)
+    public function testGnumericCOUNT($expectedResult, ...$args): void
     {
         Functions::setCompatibilityMode(Functions::COMPATIBILITY_GNUMERIC);
 
         $result = Statistical::COUNT(...$args);
-        $this->assertEquals($expectedResult, $result, '', 1E-12);
+        self::assertEqualsWithDelta($expectedResult, $result, 1E-12);
     }
 
     public function providerGnumericCOUNT()
     {
-        return require 'data/Calculation/Statistical/GnumericCOUNT.php';
+        return require 'tests/data/Calculation/Statistical/GnumericCOUNT.php';
     }
 }

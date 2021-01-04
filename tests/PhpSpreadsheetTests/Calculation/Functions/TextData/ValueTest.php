@@ -2,27 +2,30 @@
 
 namespace PhpOffice\PhpSpreadsheetTests\Calculation\Functions\TextData;
 
-use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 use PhpOffice\PhpSpreadsheet\Calculation\TextData;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PHPUnit\Framework\TestCase;
 
 class ValueTest extends TestCase
 {
-    public function setUp()
+    private $currencyCode;
+
+    private $decimalSeparator;
+
+    private $thousandsSeparator;
+
+    protected function setUp(): void
     {
-        Functions::setCompatibilityMode(Functions::COMPATIBILITY_EXCEL);
-        StringHelper::setDecimalSeparator('.');
-        StringHelper::setThousandsSeparator(',');
-        StringHelper::setCurrencyCode('$');
+        $this->currencyCode = StringHelper::getCurrencyCode();
+        $this->decimalSeparator = StringHelper::getDecimalSeparator();
+        $this->thousandsSeparator = StringHelper::getThousandsSeparator();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
-        Functions::setCompatibilityMode(Functions::COMPATIBILITY_EXCEL);
-        StringHelper::setDecimalSeparator('.');
-        StringHelper::setThousandsSeparator(',');
-        StringHelper::setCurrencyCode('$');
+        StringHelper::setCurrencyCode($this->currencyCode);
+        StringHelper::setDecimalSeparator($this->decimalSeparator);
+        StringHelper::setThousandsSeparator($this->thousandsSeparator);
     }
 
     /**
@@ -31,18 +34,18 @@ class ValueTest extends TestCase
      * @param mixed $expectedResult
      * @param $value
      */
-    public function testVALUE($expectedResult, $value)
+    public function testVALUE($expectedResult, $value): void
     {
         StringHelper::setDecimalSeparator('.');
         StringHelper::setThousandsSeparator(' ');
         StringHelper::setCurrencyCode('$');
 
         $result = TextData::VALUE($value);
-        $this->assertEquals($expectedResult, $result, '', 1E-8);
+        self::assertEqualsWithDelta($expectedResult, $result, 1E-8);
     }
 
     public function providerVALUE()
     {
-        return require 'data/Calculation/TextData/VALUE.php';
+        return require 'tests/data/Calculation/TextData/VALUE.php';
     }
 }
